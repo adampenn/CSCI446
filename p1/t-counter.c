@@ -73,23 +73,22 @@ int main( int argc, char *argv[] )
 
 	/* Call readchunck in here ... */
 
-  struct addrinfo hints, *res, *rp;
+  struct addrinfo hints, *result, *rp;
   memset(&hints, 0, sizeof(hints));
   hints.ai_family = AF_INET;
   hints.ai_socktype = SOCK_STREAM;
   int s;
   /* Use getaddrinfo to find an address */
-  if((s = getaddrinfo(SERVER_NAME, SERVER_PORT, &hints, &res)) != 0)
+  if((s = getaddrinfo(SERVER_NAME, SERVER_PORT, &hints, &result)) != 0)
   {
     printf("ERROR: %s: getaddrinfo: %s\n", argv[0], gai_strerror(s));
-    return 1;
+    exit(1);
   }
 
   /* Iterate through addresses and try to connect */
   /* Literally got this code from the example, not sure if it works */
-  for(rp = res; rp != NULL; rp->ai_next)
+  for(rp = result; rp != NULL; rp->ai_next)
   {
-    break;
     if((s = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol))== -1)
     {
       continue;
@@ -107,7 +106,7 @@ int main( int argc, char *argv[] )
     return 1;
   }
 
-  freeaddrinfo(res);
+  freeaddrinfo(result);
   
   char* buffer;
   int result = readchunk(s,buffer,chunk_size);
