@@ -70,7 +70,6 @@ int main( int argc, char *argv[] )
     return 1;
   }
   
-
 	/* Call readchunck in here ... */
 
   struct addrinfo hints, *result, *rp;
@@ -87,7 +86,7 @@ int main( int argc, char *argv[] )
 
   /* Iterate through addresses and try to connect */
   /* Literally got this code from the example, not sure if it works */
-  for(rp = result; rp != NULL; rp->ai_next)
+  for(rp = result; rp != NULL; rp=rp->ai_next)
   {
     if((s = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol))== -1)
     {
@@ -107,22 +106,35 @@ int main( int argc, char *argv[] )
   }
 
   freeaddrinfo(result);
-  
-  char* buffer;
-  int result = readchunk(s,buffer,chunk_size);
-  if(result == -1)
-  {
-    printf("ERROR: Bytes received\n");
+  int boobies;
+  if ((boobies = send(s, REQUEST, sizeof(REQUEST), 0)) == -1) {
+    printf("ERROR: did not send Message\n");
+    exit(1);
   }
-  printf("lol\n");
-  return 0;
+  
+  int res;
+  do {
+    char buffer[chunk_size];
+    res = readchunk(s,buffer,chunk_size);
+    if(res == -1)
+    {
+      printf("ERROR: Bytes received\n");
+      exit(1);
+    }
+    printf("%s\n", buffer);
+  } while(res != 0);
 
+  return 0;
+  
 }
 
 ssize_t readchunk( int sockfd, void *buf, size_t len ) 
-{
-
-	/* Define readchunck to return exactly len bytes unless an error occurs or the socket closes. 
-*/
-  return 0;
+{ 
+	// Define readchunck to return exactly len bytes unless an error occurs or the socket closes. 
+  int returnval;
+  if ((returnval = recv(sockfd, buf, len, 0)) == -1) {
+    printf("ERROR: while recv from socket\n");
+    close(sockfd);
+  }
+  return returnval;
 }
