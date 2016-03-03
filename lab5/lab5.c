@@ -32,7 +32,7 @@ int main(int argc, char* argv[]) {
   argv[1][i++] = '\0';
   // Open the output file and create buffer to write to from input
   int ofd;
-  if ((ofd = open(argv[1], O_RDWR | O_CREAT)) == -1) {
+  if ((ofd = open(argv[1], O_CREAT, 0664)) == -1) {
     printf("File opened incorrectly\n");
     exit(1);
   }
