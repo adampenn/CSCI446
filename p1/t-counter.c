@@ -53,7 +53,7 @@ int main( int argc, char *argv[] )
    * "<i>"
    * "<b>"
    */
-  
+
   int chunk_size = atoi(argv[1]);
   printf("Chunk size = %d\n", chunk_size);
   if(chunk_size > 1000 || chunk_size <= 0)
@@ -61,7 +61,7 @@ int main( int argc, char *argv[] )
     printf("Chunk size must be greater than 0 and less than 1000\n");
     return 1;
   }
-  
+
   char* tag = argv[2];
   printf("Tag = %s\n", tag);
   if((strcmp(tag,"socket") != 0) && (strcmp(tag,"<p>") != 0) && (strcmp(tag,"<i>") != 0) && (strcmp(tag,"<b>") != 0))
@@ -69,8 +69,8 @@ int main( int argc, char *argv[] )
     printf("Tag must be 'socket', '<p>', '<i>', '<b>'\n");
     return 1;
   }
-  
-	/* Call readchunck in here ... */
+
+  /* Call readchunck in here ... */
 
   struct addrinfo hints, *result, *rp;
   memset(&hints, 0, sizeof(hints));
@@ -111,28 +111,44 @@ int main( int argc, char *argv[] )
     printf("ERROR: did not send Message\n");
     exit(1);
   }
-  
+
   int res;
+  char buffer[chunk_size];
+  int tag_count = 0;
   do {
-    char buffer[chunk_size];
     res = readchunk(s,buffer,chunk_size);
+    // printf("\n\nBYTES RECEIVED = %d\n\n", res);
+    if(res == 0)
+    {
+      /* Buffer will be printed out on rec bytes = 0, reprinting data */
+      break;
+    }
     if(res == -1)
     {
       printf("ERROR: Bytes received\n");
       exit(1);
     }
-    printf("%s\n", buffer);
-  } while(res != 0);
+    char *temp = buffer;
+    while(temp = strstr(temp,tag)){
+      tag_count++;
+      temp++;
+    }
+
+    
+    // printf("%s\n", buffer);
+  } while(res > 0);
+
+  printf("Chunk size: %d     %s count: %d\n",chunk_size,tag,tag_count);
 
   return 0;
-  
+
 }
 
 ssize_t readchunk( int sockfd, void *buf, size_t len ) 
 { 
-	// Define readchunck to return exactly len bytes unless an error occurs or the socket closes. 
+  // Define readchunck to return exactly len bytes unless an error occurs or the socket closes. 
   int returnval;
-  if ((returnval = recv(sockfd, buf, len, 0)) == -1) {
+  if ((returnval = recv(sockfd, buf, len, MSG_WAITALL)) == -1) {
     printf("ERROR: while recv from socket\n");
     close(sockfd);
   }
