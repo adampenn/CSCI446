@@ -44,14 +44,12 @@ int main( int argc, char *argv[] )
   {
     printf("Usage: ./executable chunk_size tag\n");
     printf("chunk_size must be greater than 0 and less than 1000\n");
-    printf("Tag must be 'socket', '<p>', '<i>', '<b>'\n");
+    printf("Tag must be \"socket\", \"<p>\", \"<b>\", \"<em>\",  \"<i>\", \"<small>\", ");
+    printf("\"<strong>\", \"<sub>\", \"<sup>\", \"<ins>\", \"<del>\", \"<mark>\"\n");
     return 1;
   }
   /* The value of <c> can be:
-   * "socket"
-   * "<p>"
-   * "<i>"
-   * "<b>"
+   * socket <b> <em> <i> <small> <strong> <sub> <sup> <ins> <del> <mark>
    */
 
   int chunk_size = atoi(argv[1]);
@@ -64,9 +62,10 @@ int main( int argc, char *argv[] )
 
   char* tag = argv[2];
   printf("Tag = %s\n", tag);
-  if((strcmp(tag,"socket") != 0) && (strcmp(tag,"<p>") != 0) && (strcmp(tag,"<i>") != 0) && (strcmp(tag,"<b>") != 0))
+  if((strcmp(tag,"socket") != 0) && (strcmp(tag,"<b>") != 0) && (strcmp(tag,"<em>") != 0) && (strcmp(tag,"<i>") != 0) && (strcmp(tag,"small") != 0) && (strcmp(tag,"<strong>") != 0) && (strcmp(tag,"<sub>") != 0) && (strcmp(tag,"<sup>") != 0) && (strcmp(tag,"ins") != 0) && (strcmp(tag,"<del>") != 0) && (strcmp(tag,"<mark>") != 0) && (strcmp(tag,"<p>") != 0))
   {
-    printf("Tag must be 'socket', '<p>', '<i>', '<b>'\n");
+    printf("Tag must be \"socket\", \"<p>\", \"<b>\", \"<em>\",  \"<i>\", \"<small>\", ");
+    printf("\"<strong>\", \"<sub>\", \"<sup>\", \"<ins>\", \"<del>\", \"<mark>\"\n");
     return 1;
   }
 
@@ -129,7 +128,7 @@ int main( int argc, char *argv[] )
       exit(1);
     }
     char *temp = buffer;
-    while(temp = strstr(temp,tag)){
+    while((temp = strstr(temp,tag))){
       tag_count++;
       temp++;
     }
