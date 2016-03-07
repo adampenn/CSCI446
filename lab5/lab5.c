@@ -1,3 +1,4 @@
+#include <ctype.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -32,12 +33,13 @@ int main(int argc, char* argv[]) {
   argv[1][i++] = '\0';
   // Open the output file and create buffer to write to from input
   int ofd;
-  if ((ofd = open(argv[1], O_CREAT, 0664)) == -1) {
+  if ((ofd = open(argv[1], O_CREAT | O_RDWR , 0664)) == -1) {
     printf("File opened incorrectly\n");
     exit(1);
   }
   char buf[1];
   while (read(ifd, buf, 1)) {
+    buf[0] = toupper(buf[0]);
     write(ofd, buf, 1);
   }
 
