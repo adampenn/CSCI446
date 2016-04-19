@@ -25,18 +25,25 @@ main(int argc, char *argv[])
 {
 	struct addrinfo hints;
 	struct addrinfo *rp, *result;
+  char *port;
 	char *host;
-	char buf[MAX_LINE];
+  char *filename;
+	// char buf[MAX_LINE];
 	int s;
-	int len;
+	// int len;
 
-	if (argc==2)
+	if (argc==4)
 	{
 		host = argv[1];
+    port = argv[2];
+    filename = argv[3];
+    printf("host = %s\n",host);
+    printf("port = %s\n",port);
+    printf("filename = %s\n", filename); 
 	}
 	else
 	{
-		fprintf(stderr, "usage: %s host\n", argv[0]);
+		fprintf(stderr, "usage: %s host port filename\n", argv[0]);
 		exit(1);
 	}
 
@@ -47,7 +54,7 @@ main(int argc, char *argv[])
 	hints.ai_flags = 0;
 	hints.ai_protocol = 0;
 
-	if ((s = getaddrinfo(host, SERVER_PORT, &hints, &result)) != 0 )
+	if ((s = getaddrinfo(host, port, &hints, &result)) != 0 )
 	{
 		fprintf(stderr, "%s: getaddrinfo: %s\n", argv[0], gai_strerror(s));
 		exit(1);
@@ -75,13 +82,7 @@ main(int argc, char *argv[])
 	}
 	freeaddrinfo(result);
 
-	/* Main loop: get and send lines of text */
-	while (fgets(buf, sizeof(buf), stdin))
-	{
-		buf[MAX_LINE-1] = '\0';
-		len = strlen(buf) + 1;
-		send(s, buf, len, 0);
-	}
+	send(s, filename, strlen(filename)+2, 0);
 
 	close(s);
 
