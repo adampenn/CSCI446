@@ -28,9 +28,9 @@ main(int argc, char *argv[])
   char *port;
 	char *host;
   char *filename;
-	// char buf[MAX_LINE];
+	char buf[MAX_LINE];
 	int s;
-	// int len;
+	int len;
 
 	if (argc==4)
 	{
@@ -70,9 +70,9 @@ main(int argc, char *argv[])
 
 		if (connect(s, rp->ai_addr, rp->ai_addrlen) != -1)
 		{
+      printf("SOCKET S = %d.\n", s);
 			break;
 		}
-
 		close(s);
 	}
 	if (rp == NULL)
@@ -83,8 +83,13 @@ main(int argc, char *argv[])
 	freeaddrinfo(result);
 
 	send(s, filename, strlen(filename)+2, 0);
+  
+  while ((len = recv(s, buf, sizeof(buf), 0)))
+  {
+    printf("%s", buf);
+  }
 
-	close(s);
+  close(s);
 
 	return 0;
 }

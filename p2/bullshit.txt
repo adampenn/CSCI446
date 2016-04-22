@@ -1,7 +1,4 @@
-hello
-world
-today
-is
+hello world today is
 monday
 fuck
 networks
