@@ -98,7 +98,6 @@ int main(int argc, char *argv[])
     {
       /* Fills buf with filename sent from client */
     }
-<<<<<<< HEAD
     printf("Server received file: %s\n", buf);
     
     // open and send file
@@ -107,8 +106,6 @@ int main(int argc, char *argv[])
       send(new_s, buf, 254, 0);
     }
     close(new_s);
-=======
->>>>>>> d7202268b80b61a058977357c3ea2cebd67aa3a9
     break;
   }
 
@@ -125,7 +122,6 @@ int main(int argc, char *argv[])
   send(s, ch, strlen(ch), 0);
   printf("After.\n");
 
-  /*
   char ch[1];
   while(((ch[0] = fgetc(file)) != EOF))
   {
@@ -135,16 +131,6 @@ int main(int argc, char *argv[])
       printf("SEND ERROR");
    }
   }
-<<<<<<< HEAD
   fclose(file);*/
-=======
-  */
-  fclose(file);
->>>>>>> d7202268b80b61a058977357c3ea2cebd67aa3a9
-
-  freeaddrinfo(result);
-  close(s);
-  close(new_s);
-
   return 0;
 }
