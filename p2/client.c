@@ -28,9 +28,9 @@ main(int argc, char *argv[])
   char *port;
 	char *host;
   char *filename;
-	// char buf[MAX_LINE];
+	char buf[MAX_LINE];
 	int s;
-	// int len;
+	int len;
 
 	if (argc==4)
 	{
@@ -65,14 +65,19 @@ main(int argc, char *argv[])
 	{
 		if ((s = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol)) == -1 )
 		{
-			continue;
+      continue;
 		}
 
 		if (connect(s, rp->ai_addr, rp->ai_addrlen) != -1)
 		{
+	    while((send(s, filename, strlen(filename)+2, 0)) != -1);
+      while ((len = recv(s, buf, sizeof(buf), 0)))
+      {
+        printf("Contents: %s\n", buf);
+        /* Fills buf with file contents sent from server */
+      }
 			break;
 		}
-
 		close(s);
 	}
 	if (rp == NULL)
@@ -82,7 +87,7 @@ main(int argc, char *argv[])
 	}
 	freeaddrinfo(result);
 
-	send(s, filename, strlen(filename)+2, 0);
+//	send(s, filename, strlen(filename)+2, 0);
 
 	close(s);
 

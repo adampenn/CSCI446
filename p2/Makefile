@@ -9,8 +9,8 @@
 all: client server
 
 client: client.c
-	gcc -Wall client.c -o client
+	gcc -g -Wall client.c -o client
 server: server.c
-	gcc -Wall server.c -o server
+	gcc -g -Wall server.c -o server
 clean:
 	rm client server

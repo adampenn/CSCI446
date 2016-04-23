@@ -11,6 +11,8 @@
  * man pages, mostly getaddrinfo(3). */
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 #include <netdb.h>
 #include <string.h>
 #include <stdio.h>
@@ -27,8 +29,7 @@ main(int argc, char *argv[])
   struct addrinfo *rp, *result;
   char buf[MAX_LINE];
   char *port;
-  int s, new_s;
-  int len;
+  int s, new_s, len, fd;
   if(argc == 2)
   {
     port = argv[1];
@@ -99,12 +100,18 @@ main(int argc, char *argv[])
     {
       /* Fills buf with filename sent from client */
     }
+    printf("Server received file: %s\n", buf);
+    
+    // open and send file
+    fd = open(buf, O_RDONLY);
+    while (read(fd, buf, 255)) {
+      send(new_s, buf, 254, 0);
+    }
     close(new_s);
     break;
   }
-  printf("Server received file: %s\n", buf);
 
-  FILE* file = fopen(buf,"r");
+  /*FILE* file = fopen(buf,"r");
   if(file == NULL)
   {
     fprintf(stderr, "File does not exist\n");
@@ -120,7 +127,7 @@ main(int argc, char *argv[])
     }
     printf("%c", c);
   }
-  fclose(file);
+  fclose(file);*/
 
   freeaddrinfo(result);
   close(s);
