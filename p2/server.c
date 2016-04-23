@@ -11,7 +11,7 @@
  * man pages, mostly getaddrinfo(3). */
 #include <sys/types.h>
 #include <sys/socket.h>
-#include <sys/stat.h>
+#include <sys/sendfile.h>
 #include <fcntl.h>
 #include <netdb.h>
 #include <string.h>
@@ -28,7 +28,8 @@ int main(int argc, char *argv[])
   struct addrinfo *rp, *result;
   char buf[MAX_LINE];
   char *port;
-  int s, new_s, len, fd;
+  int s, new_s;
+  int len;
   if(argc == 2)
   {
     port = argv[1];
@@ -70,6 +71,7 @@ int main(int argc, char *argv[])
     {
       break;
     }
+
     close(s);
   }
   if (rp == NULL)
@@ -94,43 +96,37 @@ int main(int argc, char *argv[])
       close(s);
       exit(1);
     }
-    while ((len = recv(new_s, buf, sizeof(buf), 0)))
-    {
-      /* Fills buf with filename sent from client */
-    }
-    printf("Server received file: %s\n", buf);
-    
-    // open and send file
-    fd = open(buf, O_RDONLY);
-    while (read(fd, buf, 255)) {
-      send(new_s, buf, 254, 0);
-    }
+    len = recv(new_s, buf, 255, 0);
+      
+    printf("After Receive\n");
+    printf("buf = %s\n",buf);
     close(new_s);
-    break;
+    //break;
   }
+  printf("Server received file: %s\n", buf);
 
-  /*FILE* file = fopen(buf,"r");
-  if(file == NULL)
-  {
-    fprintf(stderr, "File does not exist\n");
-    exit(1);
-  }
-  printf("SOCKET S = %d.\n", s);
-  printf("File %s opened correctly.\n", buf);
+ //int file = open(buf,O_RDONLY);
+ //if(file == NULL)
+ //{
+ //  fprintf(stderr, "File does not exist\n");
+ //  exit(1);
+ //}
+ //char c;
+ //while(1)
+ //{
+  // c = fgetc(file);
+   //if( feof(file) )
+   //{ 
+   //  break ;
+   //}
+   //printf("%c", c);
+   //sendfile(new_s,file,0,25);
+ //}
+// fclose(file);
 
-  char *ch = "PENIS";
-  send(s, ch, strlen(ch), 0);
-  printf("After.\n");
+  freeaddrinfo(result);
+  close(s);
+    close(new_s);
 
-  char ch[1];
-  while(((ch[0] = fgetc(file)) != EOF))
-  {
-    printf("%c", ch[0]);
-    fflush(stdout);
-	  if ((send(s, ch, 1, 0)) == -1) {
-      printf("SEND ERROR");
-   }
-  }
-  fclose(file);*/
   return 0;
 }

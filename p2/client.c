@@ -30,7 +30,7 @@ main(int argc, char *argv[])
   char *filename;
 	char buf[MAX_LINE];
 	int s;
-	int len;
+	// int len;
 
 	if (argc==4)
 	{
@@ -65,19 +65,14 @@ main(int argc, char *argv[])
 	{
 		if ((s = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol)) == -1 )
 		{
-      continue;
+			continue;
 		}
 
 		if (connect(s, rp->ai_addr, rp->ai_addrlen) != -1)
 		{
-	    while((send(s, filename, strlen(filename)+2, 0)) != -1);
-      while ((len = recv(s, buf, sizeof(buf), 0)))
-      {
-        printf("Contents: %s\n", buf);
-        /* Fills buf with file contents sent from server */
-      }
 			break;
 		}
+
 		close(s);
 	}
 	if (rp == NULL)
@@ -86,15 +81,21 @@ main(int argc, char *argv[])
 		exit(1);
 	}
 	freeaddrinfo(result);
-
-//	send(s, filename, strlen(filename)+2, 0);
+  printf("Sending file: %s\n", filename);
 	send(s, filename, strlen(filename)+2, 0);
+  printf("After send\n");
   
-  while ((len = recv(s, buf, sizeof(buf), 0)))
+  int len;
+  while(1)
   {
-    printf("%s", buf);
+    while((len = recv(s, buf, sizeof(buf), 0)))
+    {
+      printf("Hello");
+      printf("%s",buf);
+    }
   }
-  close(s);
+
+	close(s);
 
 	return 0;
 }
