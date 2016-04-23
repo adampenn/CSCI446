@@ -22,8 +22,7 @@
 #define MAX_LINE 256
 #define MAX_PENDING 5
 
-  int
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
   struct addrinfo hints;
   struct addrinfo *rp, *result;
@@ -71,7 +70,6 @@ main(int argc, char *argv[])
     {
       break;
     }
-
     close(s);
   }
   if (rp == NULL)
@@ -100,6 +98,7 @@ main(int argc, char *argv[])
     {
       /* Fills buf with filename sent from client */
     }
+<<<<<<< HEAD
     printf("Server received file: %s\n", buf);
     
     // open and send file
@@ -108,6 +107,8 @@ main(int argc, char *argv[])
       send(new_s, buf, 254, 0);
     }
     close(new_s);
+=======
+>>>>>>> d7202268b80b61a058977357c3ea2cebd67aa3a9
     break;
   }
 
@@ -117,20 +118,33 @@ main(int argc, char *argv[])
     fprintf(stderr, "File does not exist\n");
     exit(1);
   }
-  char c;
-  while(1)
+  printf("SOCKET S = %d.\n", s);
+  printf("File %s opened correctly.\n", buf);
+
+  char *ch = "PENIS";
+  send(s, ch, strlen(ch), 0);
+  printf("After.\n");
+
+  /*
+  char ch[1];
+  while(((ch[0] = fgetc(file)) != EOF))
   {
-    c = fgetc(file);
-    if( feof(file) )
-    { 
-      break ;
-    }
-    printf("%c", c);
+    printf("%c", ch[0]);
+    fflush(stdout);
+	  if ((send(s, ch, 1, 0)) == -1) {
+      printf("SEND ERROR");
+   }
   }
+<<<<<<< HEAD
   fclose(file);*/
+=======
+  */
+  fclose(file);
+>>>>>>> d7202268b80b61a058977357c3ea2cebd67aa3a9
 
   freeaddrinfo(result);
   close(s);
+  close(new_s);
 
   return 0;
 }

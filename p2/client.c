@@ -70,12 +70,16 @@ main(int argc, char *argv[])
 
 		if (connect(s, rp->ai_addr, rp->ai_addrlen) != -1)
 		{
+<<<<<<< HEAD
 	    while((send(s, filename, strlen(filename)+2, 0)) != -1);
       while ((len = recv(s, buf, sizeof(buf), 0)))
       {
         printf("Contents: %s\n", buf);
         /* Fills buf with file contents sent from server */
       }
+=======
+      printf("SOCKET S = %d.\n", s);
+>>>>>>> d7202268b80b61a058977357c3ea2cebd67aa3a9
 			break;
 		}
 		close(s);
@@ -87,9 +91,18 @@ main(int argc, char *argv[])
 	}
 	freeaddrinfo(result);
 
+<<<<<<< HEAD
 //	send(s, filename, strlen(filename)+2, 0);
+=======
+	send(s, filename, strlen(filename)+2, 0);
+  
+  while ((len = recv(s, buf, sizeof(buf), 0)))
+  {
+    printf("%s", buf);
+  }
+>>>>>>> d7202268b80b61a058977357c3ea2cebd67aa3a9
 
-	close(s);
+  close(s);
 
 	return 0;
 }
