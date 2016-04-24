@@ -19,7 +19,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#define MAX_LINE 256
+#define MAX_LINE 1000000
 #define MAX_PENDING 5
 
 int main(int argc, char *argv[])
@@ -96,52 +96,65 @@ int main(int argc, char *argv[])
       close(s);
       exit(1);
     }
-    
+
     len = recv(new_s, buf, 255, 0);  
-    
-    char *text = "Hello from server";
-    
-    int text_size  = strlen(text);
-    printf("size = %d\n", text_size);
-    int network_byte_order = htonl(text_size);
-    // char network_byte_order = (char)text_size;
+    printf("Received filename: %s from client\n", buf);
 
-    
-    printf("after conversion: [%d]\n",ntohl(htonl(text_size)));
-    // send(new_s,&network_byte_order,2,0);
-    write(new_s, &network_byte_order,sizeof(network_byte_order));
+    char file_text[MAX_LINE];
+    FILE *fp = fopen(buf,"r");
+    if(fp == NULL)
+    {
+      fprintf(stderr, "File does not exist\n");
+      exit(1);
+    }
+    char c;
+    while(1)
+    {
+      c = fgetc(fp);
+      if( feof(fp) )
+      { 
+        break ;
+      }
+      strcat(file_text,&c);
+      printf("%c", c);
+    }
+      int text_size  = strlen(file_text);
+      printf("size = %d\n", text_size);
+      int network_byte_order = htonl(text_size);
 
-    send(new_s,text,strlen(text),0);
 
-    printf("After Receive\n");
-    printf("buf = %s\n",buf);
+      printf("after conversion: [%d]\n",ntohl(htonl(text_size)));
+      write(new_s, &network_byte_order,sizeof(network_byte_order));
+
+      send(new_s,file_text,strlen(file_text),0);
+
+      close(new_s);
+      break;
+    }
+    printf("Server received file: %s\n", buf);
+
+    //int file = open(buf,O_RDONLY);
+    //if(file == NULL)
+    //{
+    //  fprintf(stderr, "File does not exist\n");
+    //  exit(1);
+    //}
+    //char c;
+    //while(1)
+    //{
+    // c = fgetc(file);
+    //if( feof(file) )
+    //{ 
+    //  break ;
+    //}
+    //printf("%c", c);
+    //sendfile(new_s,file,0,25);
+    //}
+    // fclose(file);
+
+    freeaddrinfo(result);
+    close(s);
     close(new_s);
-    break;
+
+    return 0;
   }
-  printf("Server received file: %s\n", buf);
-
- //int file = open(buf,O_RDONLY);
- //if(file == NULL)
- //{
- //  fprintf(stderr, "File does not exist\n");
- //  exit(1);
- //}
- //char c;
- //while(1)
- //{
-  // c = fgetc(file);
-   //if( feof(file) )
-   //{ 
-   //  break ;
-   //}
-   //printf("%c", c);
-   //sendfile(new_s,file,0,25);
- //}
-// fclose(file);
-
-  freeaddrinfo(result);
-  close(s);
-    close(new_s);
-
-  return 0;
-}

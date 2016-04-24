@@ -20,8 +20,7 @@
 #define SERVER_PORT "5432"
 #define MAX_LINE 256
 
-int
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
 	struct addrinfo hints;
 	struct addrinfo *rp, *result;
@@ -82,24 +81,25 @@ main(int argc, char *argv[])
 		exit(1);
 	}
 	freeaddrinfo(result);
-  printf("Sending file: %s\n", filename);
+  printf("Sending file: %s to server\n", filename);
 	send(s, filename, strlen(filename)+2, 0);
-  printf("After send\n");
   
   int len;
   while(1)
   {
     int size_of_file = 0;
     read(s, &size_of_file, sizeof(size_of_file));
-    //len = recv(s, buf, 2, 0);
-    //uint32_t size_of_file = ntohl(buf[0]);
-    //int size_of_file = atoi(buf);
-    //printf("buf = [%s]\n", buf);
-    printf("LENGTH = %d\n",ntohl(size_of_file));
-    printf("Length returned from recv = %d\n", len);
 
     len = recv(s, buf, ntohl(size_of_file), 0);
-    printf("TEXT = %s\n",buf);
+    if(len == -1)
+    {
+      printf("Error on receive\n");
+    }
+    // printf("TEXT = %s\n",buf);
+
+    FILE *fd = fopen(filename, "w");
+    fwrite(buf,1,ntohl(size_of_file),fd); 
+
     break;
   }
 
