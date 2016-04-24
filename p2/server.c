@@ -96,12 +96,27 @@ int main(int argc, char *argv[])
       close(s);
       exit(1);
     }
-    len = recv(new_s, buf, 255, 0);
-      
+    
+    len = recv(new_s, buf, 255, 0);  
+    
+    char *text = "Hello from server";
+    
+    int text_size  = strlen(text);
+    printf("size = %d\n", text_size);
+    int network_byte_order = htonl(text_size);
+    // char network_byte_order = (char)text_size;
+
+    
+    printf("after conversion: [%d]\n",ntohl(htonl(text_size)));
+    // send(new_s,&network_byte_order,2,0);
+    write(new_s, &network_byte_order,sizeof(network_byte_order));
+
+    send(new_s,text,strlen(text),0);
+
     printf("After Receive\n");
     printf("buf = %s\n",buf);
     close(new_s);
-    //break;
+    break;
   }
   printf("Server received file: %s\n", buf);
 

@@ -29,6 +29,7 @@ main(int argc, char *argv[])
 	char *host;
   char *filename;
 	char buf[MAX_LINE];
+  //char *buf;
 	int s;
 	// int len;
 
@@ -88,11 +89,18 @@ main(int argc, char *argv[])
   int len;
   while(1)
   {
-    while((len = recv(s, buf, sizeof(buf), 0)))
-    {
-      printf("Hello");
-      printf("%s",buf);
-    }
+    int size_of_file = 0;
+    read(s, &size_of_file, sizeof(size_of_file));
+    //len = recv(s, buf, 2, 0);
+    //uint32_t size_of_file = ntohl(buf[0]);
+    //int size_of_file = atoi(buf);
+    //printf("buf = [%s]\n", buf);
+    printf("LENGTH = %d\n",ntohl(size_of_file));
+    printf("Length returned from recv = %d\n", len);
+
+    len = recv(s, buf, ntohl(size_of_file), 0);
+    printf("TEXT = %s\n",buf);
+    break;
   }
 
 	close(s);
