@@ -29,11 +29,10 @@ int main(int argc, char *argv[])
   char buf[MAX_LINE];
   char *port;
   int s, new_s;
-  int len;
   if(argc == 2)
   {
     port = argv[1];
-    printf("port = %s\n", port);
+    //printf("port = %s\n", port);
   }
   else
   {
@@ -96,15 +95,19 @@ int main(int argc, char *argv[])
       close(s);
       exit(1);
     }
-
-    len = recv(new_s, buf, 255, 0);  
-    printf("Received filename: %s from client\n", buf);
+    
+    if ((recv(new_s, buf, 255, 0)) == -1) {
+      printf("Error: never recived file name");
+    }
+    //printf("Received filename: %s from client\n", buf);
 
     char file_text[MAX_LINE];
     FILE *fp = fopen(buf,"r");
     if(fp == NULL)
     {
       fprintf(stderr, "File does not exist\n");
+      int network_byte_order = htonl(-1);
+      write(new_s, &network_byte_order,sizeof(-1));
       exit(1);
     }
     char c;
@@ -116,45 +119,21 @@ int main(int argc, char *argv[])
         break ;
       }
       strcat(file_text,&c);
-      printf("%c", c);
     }
-      int text_size  = strlen(file_text);
-      printf("size = %d\n", text_size);
-      int network_byte_order = htonl(text_size);
+    int text_size  = strlen(file_text);
+    int network_byte_order = htonl(text_size);
 
+    write(new_s, &network_byte_order,sizeof(network_byte_order));
 
-      printf("after conversion: [%d]\n",ntohl(htonl(text_size)));
-      write(new_s, &network_byte_order,sizeof(network_byte_order));
+    send(new_s,file_text,strlen(file_text),0);
 
-      send(new_s,file_text,strlen(file_text),0);
-
-      close(new_s);
-      break;
-    }
-    printf("Server received file: %s\n", buf);
-
-    //int file = open(buf,O_RDONLY);
-    //if(file == NULL)
-    //{
-    //  fprintf(stderr, "File does not exist\n");
-    //  exit(1);
-    //}
-    //char c;
-    //while(1)
-    //{
-    // c = fgetc(file);
-    //if( feof(file) )
-    //{ 
-    //  break ;
-    //}
-    //printf("%c", c);
-    //sendfile(new_s,file,0,25);
-    //}
-    // fclose(file);
-
-    freeaddrinfo(result);
-    close(s);
     close(new_s);
-
-    return 0;
+    break;
   }
+
+  freeaddrinfo(result);
+  close(s);
+  close(new_s);
+
+  return 0;
+}

@@ -28,18 +28,16 @@ int main(int argc, char *argv[])
 	char *host;
   char *filename;
 	char buf[MAX_LINE];
-  //char *buf;
 	int s;
-	// int len;
 
 	if (argc==4)
 	{
 		host = argv[1];
     port = argv[2];
     filename = argv[3];
-    printf("host = %s\n",host);
-    printf("port = %s\n",port);
-    printf("filename = %s\n", filename); 
+    //printf("host = %s\n",host);
+    //printf("port = %s\n",port);
+    //printf("filename = %s\n", filename); 
 	}
 	else
 	{
@@ -81,7 +79,7 @@ int main(int argc, char *argv[])
 		exit(1);
 	}
 	freeaddrinfo(result);
-  printf("Sending file: %s to server\n", filename);
+  //printf("Sending file: %s to server\n", filename);
 	send(s, filename, strlen(filename)+2, 0);
   
   int len;
@@ -89,6 +87,11 @@ int main(int argc, char *argv[])
   {
     int size_of_file = 0;
     read(s, &size_of_file, sizeof(size_of_file));
+    
+    if (ntohl(size_of_file) == -1) {
+      printf("Error on opening file: FILE DOES NOT EXIST ON SERVER\n");
+      exit(1);
+    }
 
     len = recv(s, buf, ntohl(size_of_file), 0);
     if(len == -1)
@@ -100,6 +103,7 @@ int main(int argc, char *argv[])
     FILE *fd = fopen(filename, "w");
     fwrite(buf,1,ntohl(size_of_file),fd); 
 
+    fclose(fd);
     break;
   }
 
