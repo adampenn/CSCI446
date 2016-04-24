@@ -8,9 +8,14 @@
 
 all: client server
 
+## creating client executable
 client: client.c
 	gcc -g -Wall client.c -o client
+
+## creating server executable
 server: server.c
 	gcc -g -Wall server.c -o server
+
+## adding remove client and server executable option
 clean:
 	rm client server

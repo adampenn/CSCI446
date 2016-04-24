@@ -22,6 +22,7 @@
 
 int main(int argc, char *argv[])
 {
+  // declare varibales
 	struct addrinfo hints;
 	struct addrinfo *rp, *result;
   char *port;
@@ -81,7 +82,8 @@ int main(int argc, char *argv[])
 	freeaddrinfo(result);
   //printf("Sending file: %s to server\n", filename);
 	send(s, filename, strlen(filename)+2, 0);
-  
+ 
+  // find file size and send to client
   int len;
   while(1)
   {

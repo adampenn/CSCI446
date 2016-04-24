@@ -24,11 +24,14 @@
 
 int main(int argc, char *argv[])
 {
+  // declare varibales
   struct addrinfo hints;
   struct addrinfo *rp, *result;
   char buf[MAX_LINE];
   char *port;
   int s, new_s;
+
+  // check number of command line args
   if(argc == 2)
   {
     port = argv[1];
@@ -99,17 +102,21 @@ int main(int argc, char *argv[])
     if ((recv(new_s, buf, 255, 0)) == -1) {
       printf("Error: never recived file name");
     }
+    
     //printf("Received filename: %s from client\n", buf);
 
+    // create file pointer and buffer
     char file_text[MAX_LINE];
     FILE *fp = fopen(buf,"r");
     if(fp == NULL)
     {
-      fprintf(stderr, "File does not exist\n");
+      //fprintf(stderr, "File does not exist\n");
       int network_byte_order = htonl(-1);
       write(new_s, &network_byte_order,sizeof(-1));
       exit(1);
     }
+
+    // Fill buffer
     char c;
     while(1)
     {
@@ -127,6 +134,7 @@ int main(int argc, char *argv[])
 
     send(new_s,file_text,strlen(file_text),0);
 
+    fclose(fp);
     close(new_s);
     break;
   }
